@@ -1,0 +1,45 @@
+<!DOCTYPE htm >
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!--suppress ThymeleafVariablesResolveInspection -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录啦！</title>
+    <link href="../static/css/loginStyle.css" rel='stylesheet' type='text/css' /></link>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="App Loction Form,Login Forms,Sign up Forms,Registration Forms,News latter Forms,Elements"./>
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <script src="js/check.js"></script>
+</head>
+<body>
+<h1>通信管理系统登陆界面</h1>
+<div class="app-AddressBook">
+    <h2>请输入用户名称和密码进行登录</h2>
+    <div class="location"><img src="../static/images/location.png" class="img-responsive" alt="" /></div>
+
+
+    <div class = "login">
+
+        <form class="login-form" action = "/checklogin" th:object="${user}">
+            <input type="text" class="text" id = "UName" th:field="*{userName}"  required/>
+            <input type="password" id = "UPSW" th:field="*{passWord}"  required/>
+            <p th:if="*{message}" th:text = "*{message}" style="color:red;font-size: 30px" >
+            </p>
+            <input type="submit" id = "SUB" value="Sign in">
+        </form>
+
+    </div>
+
+
+
+    <div class="new">
+        <h3><a href="#">Forgot password ?</a></h3>
+        <h4><a href="#">New here ? Sign Up</a></h4>
+        <div class="clear"></div>
+    </div>
+
+</div>
+</body>
+</html>
