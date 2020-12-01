@@ -38,7 +38,9 @@ public class MainController {
     @RequestMapping("/add")
     public String add(Model model, Contact cperson)
     {
-        //cperson.setAddress("中南海");
+//        cperson.setAddress("中南海");
+        System.out.println(12333);
+
         model.addAttribute("contact",cperson);
         return "add";
     }
