@@ -1,0 +1,11 @@
+#chooseOdertype li,#chooseOdertype li a{
+    float: left;
+    display: inline-block;
+    width: 80px;
+}
+#chooseOdertype ul{
+    display:inline-block;
+    margin: 0;
+    border: 0;
+    padding: 0;
+}

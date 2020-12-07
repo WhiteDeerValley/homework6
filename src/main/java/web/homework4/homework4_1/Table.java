@@ -1,5 +1,6 @@
 package web.homework4.homework4_1;
 
+import web.homework4.homework4_1.Contact;
 import lombok.Data;
 
 import java.util.Vector;

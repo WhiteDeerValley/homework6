@@ -1,187 +1,230 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title></title>
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <meta name="generator" content="" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-    <link href="../static/css/haiersoft.css" rel="stylesheet" type="text/css" media="screen,print" />
-    <link href="../static/css/print.css" rel="stylesheet" type="text/css" media="print" />
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
-    <script src="js/table.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        function add() {
-            location.href = "add"
-        }
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=gb2312" />
+    <title>欢迎来到微博简易版</title>
+    <meta name="keywords" content="weibo,jiaoyou" />
+    <meta name="description" content="微博简易版" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type=""></script>
+    <link rel="text/javascript" href="../static/js/main.js">
+    <link rel="stylesheet" href="../static/css/iconfont.css">
+    <link rel="stylesheet" href="../static/css/mainTable.css">
+    <link href="../static/css/head.css" rel="stylesheet" type="text/css" />
+    <link href="../static/css/loginTable.css" rel="stylesheet" type="text/css" />
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
 
-        function del(elem) {
-            tr = elem.parentNode.parentNode
-            index = tr.rowIndex
-            tr.parentNode.removeChild(tr)
 
-            $.post('/del', {row: index})
-        }
-
-        function chg(elem) {
-            tr = elem.parentNode.parentNode
-            index = tr.rowIndex
-
-            var temp = document.createElement("form")
-            temp.action = "/alter"
-            temp.method = "post"
-            temp.style.display = "none"
-
-            var opt = document.createElement("textarea")
-            opt.name = "index"
-            opt.value = index.toString()
-            temp.appendChild(opt)
-            document.body.appendChild(temp)
-
-            temp.submit()
-            return temp
-
-        }
-
-    </script>
-    <style>
-        td > button
-        {
-            font-size: 15px;
-            background-color: #0bd38a;
-            color: white;
-            padding: 5px 13px 5px 13px;
-            margin: 4px 15px 4px 15px;
-            outline: none;
-            border: none;
-            border-radius: 4px;
-        }
-    </style>
-
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
-    <![endif]-->
 </head>
 
 <body>
+<!--注册框开始-->
+<div class="modal" id="login_model">
+    <div class="modal-dialog">
+        <!--            登录框内容-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--标题-->
+                <h4 class="modal-title">请输入用户名和密码</h4>
 
-<div class="wrap_right">
+                <!--取消按钮-->
+                <button class="modal-login_cancer" data-dismiss="modal">
+                    <!--iconfont待修改-->
+                    <em class="iconfont">&#xe621;</em>
+                </button>
 
+            </div>
 
-
-    <!-- Contents -->
-    <div id="Contents">
-        <script type="text/javascript">
-            $(function(){
-                $(".select").each(function(){
-                    var s=$(this);
-                    var z=parseInt(s.css("z-index"));
-                    var dt=$(this).children("dt");
-                    var dd=$(this).children("dd");
-                    var _show=function(){dd.slideDown(200);dt.addClass("cur");s.css("z-index",z+1);};
-                    var _hide=function(){dd.slideUp(200);dt.removeClass("cur");s.css("z-index",z);};
-                    dt.click(function(){dd.is(":hidden")?_show():_hide();});
-                    dd.find("a").click(function(){dt.html($(this).html());_hide();});
-                    $("body").click(function(i){ !$(i.target).parents(".select").first().is(s) ? _hide():"";});})})
-        </script>
-
-
-        <!-- MainForm -->
-        <div id="MainForm">
-            <div class="form_boxB">
-                <h2>名单管理</h2>
-
-                <table id = "tabProduct" cellpadding="0" cellspacing="0">
-
-                    <!-- 表头 -->
-                    <thead>
-                    <tr bgcolor="#7fffd4">
-                        <th>选中</th>
-                        <th>序号</th>
-                        <th>姓名</th>
-                        <th>电话</th>
-                        <th>邮箱</th>
-                        <th>住址</th>
-                        <th>QQ号</th>
-                        <th>备注</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <!-- 表头 -->
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <form action="#" id="form" class="form-horizontal"  th:object="${user}">
 
 
-                    <!-- 表身 -->
-                    <tbody id="listTable">
-                    <tr th:each="i:${session.table.getTable()}">
-                        <td><input type="checkbox" name="item"></td>
-                        <td th:text="${iStat.index + 1}">1</td>
-                        <td class="Name" th:text="${i.getName()}"></td>
-                        <td class="telNum" th:text="${i.getTelephone()}"></td>
-                        <td class="eMail" th:text="${i.getEmail()}"></td>
-                        <td class="Address" th:text="${i.getAddress()}"></td>
-                        <td class="qqNum" th:text="${i.getQq()}"></td>
-                        <td class="nickName" th:text="${i.getNickName()}"></td>
-                        <td class="last">
-                            <button onclick="del(this)">
-                                删除
-                            </button>
-                            <button onclick="chg(this)">
-                                修改
-                            </button>
-                    </tr>
-                    </tbody>
-                    <!-- 表身 -->
-                </table>
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label for="userName"></label><input id="userName" name="userName" placeholder="手机号" class="form-control" type="text" th:field="*{userName}" pattern="(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}" oninput=check(this) required >
 
-                <tr>
-                    <p class="msg">一共有3位联系人，当前显示从第1条至第3条</p>
-                </tr>
+                            <label for="passWord"></label><input id="passWord" name="passWord" placeholder="请输入密码" class="form-control" type="password" th:field="*{passWord}" pattern="[a-zA-Z]\w{5,17}" oninput=check(this) required >
+                            <label for="passWordAgain"></label><input id="passWordAgain" name="passWordAgain" placeholder="请再次输入密码" class="form-control" type="password" th:field="*{passWordAgain}" pattern="[a-zA-Z]\w{5,17}" oninput=check(this) required >
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" id="loginCertain_btn" class="btn login_btn">确认</button>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+<!--注册框结束-->
+
+<div id="headTop">
+    <!--头右部导航框开始-->
+    <div id="menu">
+
+        <ul>
+            <li class="first">
+                <a href="#" accesskey="1" title="" id="loginBtn" class="loginBtn" >
+
+                    <!--iconfont待修改-->
+                    <em class="iconfont">&#xe621;</em>
+                    <em class="iconfont-word">登陆</em>
+                </a>
+            </li>
+            <li class="second">
+                <a href="#" accesskey="1" title="" id="logupBtn" class="logupBtn">
+
+                    <!--iconfont待修改-->
+                    <em class="iconfont">&#xe621;</em>
+                    <em class="iconfont-word">注册</em>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+    <!-- 头右部导航框开始 -->
+</div>
+
+
+<div id="sendWeibo">
+    <div class="inputHeader">
+        <h1 id="inputHeader">有什么新鲜事想告诉大家</h1>
+    </div>
+
+    <!--    输入框及其响应框-->
+    <div class="input" node-type="textElDiv">
+        <textarea class="weiboInput" title="微博输入框" style="overflow: hidden" cols="1" rows="1"></textarea>
+        <div id = "afterInput">
+            <button class="funToSubmit">提交</button>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- end #header -->
+<div id="content">
+
+    <div id="chooseOdertype">
+        <ul>
+<!--            href="/main?method=commentNum-->
+            <li><a class="orderMethod" id = "commentNum" href="###" onclick = Order(this)>评论</a></li>
+            <li><a class="orderMethod" id = "aggreeNum" href="###" onclick = Order(this)>点赞</a></li>
+            <li><a class="orderMethod" id = "createDate" href="###" onclick = Order(this)>发布时间</a></li>
+        </ul>
+
+    </div>
+    <div id = postTotal>
+        <div id="posts" th:each="i,iStat:${msgList}" >
+            <div class="post" >
+                <!--            发布人的姓名-->
+                <h2 class="publisher" th:text = ${i["fromId"]}>Unknown</h2>
+                <div class="story">
+                    <!--                发布者发布的内容-->
+                    <p class="publishCon" th:text = ${i["content"]}>发布信息</p>
+                </div>
+                <div class="meta">
+                    <p class="date">
+                        <span class="hide">Posted on </span>
+                        <span class="posted" th:text = ${i["createDate"]}>发布时间</span>
+                        <span class="hide"> by Admin</span>
+                    </p>
+
+                    <p class="file">
+                        <span class="hide">Filed under </span>
+                        <a href="###" class="comments" th:text = ${i["commentNum"]} th:id="${iStat.count}" onclick="comment(this)">Comments</a>
+                        <span class="hide"> | </span>
+                        <a href="#" class="permalink" th:text = ${i["aggreeNum"]}>Agreets</a>
+                    </p>
+                </div>
+            </div>
+            <div class="comments" style="display: none">
+                <textarea class="weiboInput" title="评论输入框" style="overflow: hidden" cols="1" rows="1"></textarea>
+                <div >
+                    <button class="funToSubmit">提交</button>
+                </div>
+<!--                已经存在的评论-->
+                <div class="exitcomments" th:each="item,itemStat:${commentList}">
+                    <span th:text= ${i["name"]} >发布者信息</span>
+                    <span th:text= ${i["comment"]>评论内容</span>
+                </div>
             </div>
         </div>
-        <!-- /MainForm -->
-
-
-
-
-
-        <div class="btn_box floatR mag_l20">
-            <input id="addBtn" name="" type="button" value="增加" onMouseMove="this.className='input_move'" onMouseOut="this.className='input_out'" onclick="add()">
-        </div>
-
-        <div class="btn_box floatR mag_l20">
-            <input id="srchBtn" name="" type="button" value="搜索" onMouseMove="this.className='input_move'" onMouseOut="this.className='input_out'" onclick="AddRow(document.getElementById('tabProduct'),1)"></div>
-
-        <div class="form_boxC floatR mag_l20">
-            <input id = "FindByTelNum" value="请输入要查询的手机号" onfocus="if(value=='请输入要查询的手机号')value=''" onblur="if(!value)value='请输入要查询的手机号'">
-        </div>
-        <!-- /btn_box -->
-
-
-
-        <!-- PageNum -->
-        <ul id="PageNum">
-            <li><a href="#">首页</a></li>
-            <li><a href="#">上一页</a></li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">6</a></li>
-            <li><a href="#">下一页</a></li>
-            <li><a href="#">尾页</a></li>
-        </ul>
-        <!-- /PageNum -->
     </div>
-    <!-- /Contents -->
 
-    <!-- /footer -->
-    <footer>
-        <address>Designed by Zhangying</address>
-    </footer>
-    <!-- /footer -->
+    <!-- end #posts -->
+    <div id="links">
+        <ul>
+            <li>
+                <h2>Archives</h2>
+                <ul>
+                    <li><a href="#">February 2014</a> <i>(22)</i></li>
+                    <li><a href="#">January 2014</a> <i>(31)</i></li>
+                    <li><a href="#">December 2014</a> <i>(31)</i></li>
+                    <li><a href="#">November 2014</a> <i>(30)</i></li>
+                    <li><a href="#">October 2014</a> <i>(31)</i></li>
+                </ul>
+            </li>
+            <li>
+                <h2>Categories</h2>
+                <ul>
+                    <li><a href="#">Donec Dictum Metus</a></li>
+                    <li><a href="#">Etiam Rhoncus Volutpat</a></li>
+                    <li><a href="#">Integer Gravida Nibh</a></li>
+                    <li><a href="#">Maecenas Luctus Lectus</a></li>
+                    <li><a href="#">Mauris Vulputate Dolor Nibh</a></li>
+                    <li><a href="#">Nulla Luctus Eleifend</a></li>
+                    <li><a href="#">Posuere Augue Sit Nisl</a></li>
+                </ul>
+            </li>
+            <li>
+                <h2>Blog Roll</h2>
+                <ul>
+                    <li><a href="#">Donec Dictum Metus</a></li>
+                    <li><a href="#">Etiam Rhoncus Volutpat</a></li>
+                    <li><a href="#">Integer Gravida Nibh</a></li>
+                    <li><a href="#">Maecenas Luctus Lectus</a></li>
+                    <li><a href="#">Mauris Vulputate Dolor Nibh</a></li>
+                    <li><a href="#">Nulla Luctus Eleifend</a></li>
+                    <li><a href="#">Posuere Augue Sit Nisl</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- end #links -->
+    <div style="clear: both;">&nbsp;</div>
+</div>
+<!-- end #content -->
+<div id="footer">
+    <div th:text = "共+${tsum}+条微博，共为+${tpage}+页，当前为+${cPage}+页"></div>
+    <a href="/main?cp=1">首页</a>
+    <a href="#" th:if="${cPage != 1}" th:href="@{'/main?cp='+${cPage - 1}}">上一页</a>
+    <a href="#" th:if="${cPage != tpage}" th:href="@{'/main?cp='+${cPage + 1}}">下一页</a>
+    <a href="#" th:if="${cPage != tpage}" th:href="@{'/main?cp='+${tpage}}">尾页</a>
+</div>
+<!-- end #footer -->
+
+
 </body>
+
+
+<script type="text/javascript" src="../static/js/main.js"></script>
+
+<script type="text/javascript" src="../static/js/submitWeibo.js"></script>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </html>
