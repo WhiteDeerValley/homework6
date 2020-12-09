@@ -54,7 +54,7 @@ public class CommentsDao {
 
     }
 
-    public static ArrayList<Comments> selectAll(String method, int cpage, int count, int tsum){
+    public static ArrayList<Comments> selectAll(String method, int cpage, int count, int tsum,int fromId){
         ArrayList<Comments> result = new ArrayList<Comments>();
 
         //声明结果集
@@ -70,7 +70,7 @@ public class CommentsDao {
             if(tsum-t1 < count)
                 t2 = tsum-t1;
 
-            String sql =  "select * from userInfo.comment order by "+method+" desc limit "+ String.valueOf(t1)+','+String.valueOf(t2);
+            String sql =  "select * from userInfo.comment where relate like "+fromId+" order by "+method+" desc limit "+ String.valueOf(t1)+','+String.valueOf(t2);
             ps = conn.prepareStatement(sql);
 
 //            System.out.println(t1);
@@ -79,6 +79,7 @@ public class CommentsDao {
 
             //从数据库中获取数据
             rs = ps.executeQuery(sql);
+
             while (rs.next()) {
 
                 Comments com = new Comments(
@@ -94,6 +95,8 @@ public class CommentsDao {
 
         }catch (SQLException e){
             e.printStackTrace();
+        }finally {
+            BaseDao.closeAll(rs,ps,conn,null);
         }
 
 

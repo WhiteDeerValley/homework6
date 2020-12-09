@@ -9,6 +9,7 @@
     <meta name="description" content="微博简易版" />
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type=""></script>
     <link rel="text/javascript" href="../static/js/main.js">
+    <link rel="text/javascript" href="../static/js/agree.js">
     <link rel="stylesheet" href="../static/css/iconfont.css">
     <link rel="stylesheet" href="../static/css/mainTable.css">
     <link href="../static/css/head.css" rel="stylesheet" type="text/css" />
@@ -20,6 +21,7 @@
 </head>
 
 <body>
+<input id="labelUrl" type="hidden" th:value="${login}" />
 <!--注册框开始-->
 <div class="modal" id="login_model">
     <div class="modal-dialog">
@@ -124,7 +126,7 @@
     </div>
     <div id = postTotal>
         <div id="posts" th:each="i,iStat:${msgList}" >
-            <div class="post" >
+            <div class="post" th:id = ${i["id"]}>
                 <!--            发布人的姓名-->
                 <h2 class="publisher" th:text = ${i["fromId"]}>Unknown</h2>
                 <div class="story">
@@ -140,21 +142,10 @@
 
                     <p class="file">
                         <span class="hide">Filed under </span>
-                        <a href="###" class="comments" th:text = ${i["commentNum"]} th:id="${iStat.count}" onclick="comment(this)">Comments</a>
+                        <a href="###" class="comments" th:text = ${i["commentNum"]} onclick="comment(this)">Comments</a>
                         <span class="hide"> | </span>
-                        <a href="#" class="permalink" th:text = ${i["aggreeNum"]}>Agreets</a>
+                        <a href="###" class="agreets" th:text = ${i["aggreeNum"]} onclick="agree(this)">Agreets</a>
                     </p>
-                </div>
-            </div>
-            <div class="comments" style="display: none">
-                <textarea class="weiboInput" title="评论输入框" style="overflow: hidden" cols="1" rows="1"></textarea>
-                <div >
-                    <button class="funToSubmit">提交</button>
-                </div>
-<!--                已经存在的评论-->
-                <div class="exitcomments" th:each="item,itemStat:${commentList}">
-                    <span th:text= ${i["name"]} >发布者信息</span>
-                    <span th:text= ${i["comment"]>评论内容</span>
                 </div>
             </div>
         </div>

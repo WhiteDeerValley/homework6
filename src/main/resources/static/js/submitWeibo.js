@@ -1,4 +1,5 @@
 $('.funToSubmit').on("click",function (){
+
     const content = $('.weiboInput').val();
 
     if (content === "")

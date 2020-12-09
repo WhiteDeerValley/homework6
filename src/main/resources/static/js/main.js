@@ -12,36 +12,94 @@ function check(its)
         its.style.color = "rgb(0, 240, 0)";
     }
 }
+function agree(ele){
 
+    let url;
+    url = "/ajax/aggreet"
+    let id = ele.parentNode.parentNode.parentNode.getAttribute("id");
+
+    $.ajax({
+        url:url,
+        type:"GET",
+        //其中用户的id自己后端自己从session里面取
+        data:{"id":id},
+        success: function (result){
+            let num = Number(ele.innerHTML) ;
+            let ac = Number(result)
+            ele.innerHTML = num+ac;
+            console.log(result);
+            console.log(num);
+        },
+        error: function (jqXHR, textStatus, errorThrown){
+            alert('新建或修改错误!');
+        }
+    })
+}
 function comment(ele){
     //this是dom对象，btn是jquery对象
     let url;
     // alert(user);
     url = "/ajax/getcomments";
+    let method = "id";
+    let id = ele.parentNode.parentNode.parentNode.getAttribute("id");
+    // alert(id);
     $.ajax({
         url:url,
         type:"GET",
+        data:{"id":id,"method":method},
         success: function (result){
-            var html = "<div class=\"comments\" >"
-                //     html +="<textarea class=\"weiboInput\" title=\"评论输入框\" style=\"overflow: hidden\" cols=\"1\" rows=\"1\">"
-                //     html+="</textarea>"
-                // html+="<div>"
-                //     html+="<button class=\"funToSubmit\">"
-                //     html+="提交"
-                //     html+="</button>"
-                // html+="</div>"
-                //
-                // html = "<div class=\"exitcomments\" >"
-                //     html+= "<span>";
-                //         html+"发布者信息";
-                //     html+="</span>";
-                //     html+= "<span>";
-                //         html+"评论内容";
-                //     html+="</span>";
-                // html+="</div>"
-            html+="</div>"
-            ele.parentNode.parentNode.parentNode.append(html);
-            console.log($(ele).index())
+
+
+
+
+            let parentnodes = ele.parentNode.parentNode.parentNode.parentNode;
+
+            let delcomments = parentnodes.lastElementChild;
+            if (delcomments.className==="comments")
+            {
+                parentnodes.removeChild(delcomments);
+            }
+            else {
+                let tempNode = document.createElement('div');
+                tempNode.setAttribute("class", "comments");
+                let text = document.createElement("textarea");
+                text.setAttribute("class", "weiboInput");
+                text.setAttribute("title", "评论输入框");
+                text.setAttribute("style", "overflow: hidden");
+                text.setAttribute("cols", 1);
+                text.setAttribute("rows", 1);
+                tempNode.appendChild(text);
+                let submit = document.createElement("div");
+                let bt = document.createElement("button");
+                bt.appendChild(document.createTextNode("提交"));
+                bt.setAttribute("class", "funToSubmit");
+                submit.appendChild(bt);
+                tempNode.appendChild(submit);
+
+                if(result.length > 0)
+                {
+                    $.each(result,function (i,n) {
+
+                        let exit = document.createElement("div");
+                        exit.setAttribute("class", "exitcomments");
+                        let th1 = document.createElement("span");
+                        th1.appendChild(document.createTextNode(n.name));
+                        let th2 = document.createElement("span");
+                        th1.appendChild(document.createTextNode(n.comment));
+                        exit.appendChild(th1);
+                        exit.appendChild(th2);
+                        tempNode.appendChild(exit);
+
+
+                    })
+                }
+                else
+                {
+                    text.setAttribute("placeholder","还没有人评论哦");
+                }
+                parentnodes.append(tempNode);
+            }
+            // parentnodes.removeChild(delcomments);
 
         },
         error: function (jqXHR, textStatus, errorThrown){
@@ -50,61 +108,84 @@ function comment(ele){
     })
 }
 
+
+
 function Order(ele){
     let url;
     url = "/ajax/main";
-    var json;
-    var method = ele.getAttribute("id");
+    let json;
+    let method = ele.getAttribute("id");
+
     $.ajax({
         url:url,
         type:"GET",
         data:{method:method},
         success:function (result){
-            console.log(result)
-            $("#postTotal").empty()
+
+            $("#postTotal").empty();
             $.each(result,function (i,n)
             {
-                var xhtml = "<div id=\"posts\" th:each=\"i,iStat:${msgList}\" >"
-                    xhtml += "<div class=\"post\" >";
-                        xhtml +='<h2 class=\"publisher\" >';
-                            if (n.fromId!=null)
-                                xhtml+=    n.fromId;
-                        xhtml+="</h2>";
-                        xhtml+="<div class=\"story\">";
-                            xhtml+="<p class=\"publishCon\" th:text = ${i[\"content\"]}>";
-                            xhtml+=n.comment;
-                            xhtml+="</p>"
-                        xhtml+="</div>"
-                        xhtml+="<p class=\"date\">"
-                        xhtml+="<span class=\"posted\" th:text = ${i[\"createDate\"]}>";
-                            xhtml+=n.createDate;
-                        xhtml+="</span>"
-                        xhtml+="</p>"
-                        xhtml+="<p class=\"file\">"
-                            xhtml+="<a href=\"###\" class=\"comments\"  onclick=\"comment(this)\">";
-                            xhtml+=n.commentNum;
-                            xhtml+="</a>";
-                            xhtml+="<a href=\"#\" class=\"permalink\" th:text = ${i[\"aggreeNum\"]}>"
-                            xhtml+=n.aggreeNum;
-                            xhtml+="</a>"
-                        xhtml+="</p>"
-                    xhtml+="</div>"
-                xhtml+="<div>";
-                console.log(xhtml);
-                $("#postTotal").append(xhtml);
+
+                let posts = document.createElement("div");
+                posts.setAttribute("id","posts");
+                let post = document.createElement("div");
+                post.setAttribute("class","post");
+                post.setAttribute("id",n.id);
+
+                let h2T = document.createElement("h2");
+                h2T.setAttribute("class","publisher");
+                h2T.appendChild(document.createTextNode(n.fromId));
+                post.appendChild(h2T);
+
+                let story = document.createElement("div");
+                story.setAttribute("class","story");
+                let p = document.createElement("p");
+                p.setAttribute("class","publishCon");
+                p.appendChild(document.createTextNode(n.content));
+                story.appendChild(p);
+                post.appendChild(story);
+
+                let meta = document.createElement("div");
+                let pdate = document.createElement("p");
+                pdate.setAttribute("class","date");
+
+                let span_posted = document.createElement("span");
+                span_posted.appendChild(document.createTextNode(n.createDate));
+
+                pdate.appendChild(span_posted);
+                meta.appendChild(pdate);
+
+                let pfile = document.createElement("p");
+                pfile.setAttribute("class","file");
+
+                let a_comments = document.createElement("a");
+                a_comments.setAttribute("href","###");
+                a_comments.setAttribute("class","comments");
+                a_comments.setAttribute("onclick","comment(this)");
+                a_comments.appendChild(document.createTextNode(n.commentNum));
+                pfile.appendChild(a_comments);
+                let a_aggreets = document.createElement("a");
+                a_aggreets.setAttribute("href","###");
+                a_aggreets.setAttribute("class","agreets");
+                a_aggreets.setAttribute("onclick","agree(this)");
+                a_aggreets.appendChild(document.createTextNode(n.aggreeNum));
+                pfile.appendChild(a_aggreets);
+
+                meta.appendChild(pfile);
+                post.appendChild(meta);
+                posts.appendChild(post);
+                $("#postTotal").append(posts);
             });
         },
         error: function (jqXHR, textStatus, errorThrown){
             alert('新建或修改错误!');
         }
     })
-    console.log(json)
+
 
 }
 
 $(document).ready(
-
-
     $('.loginBtn').on('click',function(){
         //事件处理程序
         save_method = 'login';
@@ -127,13 +208,16 @@ $(document).ready(
                 type: "POST",
                 data: $('#form').serialize(),
                 success: function (result) {
+
                     //如果成功，隐藏弹出框并重新加载数据
                     if (result === "error") {
                         alert('用户名或密码错误，请重新输入');
                         $("#passWord").val("");
                     } else {
+                        alert("success");
+                        $("#labelUrl").val("Yes");
                         $('#login_model').modal('hide');
-                        reload_table();
+
                     }
 
                 },

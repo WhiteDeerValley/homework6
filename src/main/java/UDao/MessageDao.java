@@ -27,7 +27,8 @@ public class MessageDao {
                 msg.getCommentNum(),
                 msg.getAggreeNum()
         };
-//        System.out.println(sql)；
+
+//        System.out.println(msg.getContent());
         return BaseDao.exectuIUD(sql,params);
     }
 
@@ -111,5 +112,64 @@ public class MessageDao {
 
 
         return result;
+    }
+
+    //根据id得到Message类型的整个数据
+    public static Message select_by_id(int msg_id){
+        ResultSet rs = null;
+        Connection conn = BaseDao.getconn();
+        PreparedStatement ps = null;
+
+        String sql = "select * from userInfo.message where id="+msg_id;
+
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                Message u = new Message(
+                        rs.getInt("id"),
+                        rs.getString("content"),
+                        rs.getString("fromId"),
+                        rs.getString("toId"),
+                        rs.getInt("hasRead"),
+                        rs.getDate("createDate"),
+                        rs.getInt("commentNum"),
+                        rs.getInt("agreeNum")
+                );
+                return u;
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }finally {
+            BaseDao.closeAll(rs,ps,conn,null);
+        }
+        return null;
+    }
+
+    public static void update_agree(int msg_id,int acttion)
+    {
+        ResultSet rs = null;
+        //获取连接对象
+        Connection conn = BaseDao.getconn();
+
+        PreparedStatement ps = null;
+        try {
+            String sql = "";
+            if (acttion>0)
+            {
+                sql = "update userInfo.message set aggreeNum=aggreeNum +"+acttion+" where id = "+ msg_id;
+            }
+            else {
+                sql = "update userInfo.message set aggreeNum=aggreeNum " + acttion + " where id = " + msg_id;
+            }
+            ps = conn.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }finally {
+            BaseDao.closeAll(rs,ps,conn,null);
+        }
     }
 }

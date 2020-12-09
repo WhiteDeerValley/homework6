@@ -67,6 +67,11 @@ public class MainController {
         //为th标签取数据作准备
         model.addAttribute("user",user);
 
+        //为隐藏域作准备
+        model.addAttribute("login","No");
+        if(session.getAttribute("login") == "Yes")
+            model.addAttribute("login","Yes");
+
 
 //        System.out.println("PPPP");
 
